@@ -2,6 +2,9 @@
 
 const COUNT_TASKS = 3;
 
+const main = document.querySelector(`.main`);
+const control = main.querySelector(`.main__control`);
+
 const createMenuTemplate = () => {
   return `
     <section class="control__btn-wrap">
@@ -464,22 +467,36 @@ const renderComponent = (container, template, place = `beforeend`) => {
   return container.insertAdjacentHTML(place, template);
 };
 
-const main = document.querySelector(`.main`);
-const control = main.querySelector(`.main__control`);
+const convertStringToElement = (str) => {
+  const template = document.createElement(`template`);
+  template.innerHTML = str.trim();
+  return template.content.firstChild;
+};
 
-renderComponent(control, createMenuTemplate());
-renderComponent(main, createFilterTemplate());
-renderComponent(main, createBoardTemplate());
+const renderTasks = () => {
+  const fragment = document.createDocumentFragment();
 
-const board = main.querySelector(`.board`);
-renderComponent(board, createSortingTemplate());
-renderComponent(board, createTaskListTemplate());
+  for (let i = 0; i < COUNT_TASKS; i++) {
+    fragment.append(convertStringToElement(createTaskTemplate()));
+  }
 
-const boardTasks = board.querySelector(`.board__tasks`);
-renderComponent(boardTasks, createTaskEditTemplate());
+  return fragment;
+};
 
-for (let i = 0; i < COUNT_TASKS; i++) {
-  renderComponent(boardTasks, createTaskTemplate());
-}
+const render = () => {
+  renderComponent(control, createMenuTemplate());
+  renderComponent(main, createFilterTemplate());
+  renderComponent(main, createBoardTemplate());
 
-renderComponent(board, createLoadMoreButtonTemplate());
+  const board = main.querySelector(`.board`);
+  renderComponent(board, createSortingTemplate());
+  renderComponent(board, createTaskListTemplate());
+
+  const boardTasks = board.querySelector(`.board__tasks`);
+  renderComponent(boardTasks, createTaskEditTemplate());
+
+  boardTasks.append(renderTasks());
+  renderComponent(board, createLoadMoreButtonTemplate());
+};
+
+render();
