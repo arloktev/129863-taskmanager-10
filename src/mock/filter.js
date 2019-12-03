@@ -8,7 +8,7 @@ const NAME_FILTERS = [
   `archive`
 ];
 
-const filter = () => {
+const generateFilters = () => {
   return NAME_FILTERS.map((name) => {
     return {
       name,
@@ -17,4 +17,4 @@ const filter = () => {
   });
 };
 
-export {filter};
+export {generateFilters};

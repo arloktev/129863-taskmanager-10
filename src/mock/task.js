@@ -1,7 +1,7 @@
 import {DescriptionTasks, DefaultRepeatingDays, Tags, Colors} from '../const';
 
 const generateRepeatingDays = () => {
-  return Object.assign({}, DefaultRepeatingDays, {'mo': Math.random() > 0.5});
+  return Object.assign({}, DefaultRepeatingDays, {'mo': Math.random() > 0.5}, {'we': Math.random() > 0.5}, {'fr': Math.random() > 0.5});
 };
 
 const getRandomInRange = (min, max) => {
