@@ -1,4 +1,4 @@
-import {Colors, MonthNames} from '../../const';
+import {Colors, MonthNames, Days} from '../../const';
 import {formatTime} from '../../utils.js';
 
 const createTagsTemplate = (tags) => {
@@ -19,6 +19,27 @@ const createTagsTemplate = (tags) => {
             delete
           </button>
         </span>
+      `;
+    })
+    .join(`\n`);
+};
+
+const createRepeatDaysTemplate = (days, repeatingDays) => {
+  return days
+    .map((day) => {
+      const isChecked = repeatingDays[day];
+      return `
+        <input
+          class="visually-hidden card__repeat-day-input"
+          type="checkbox"
+          id="repeat-${day}-4"
+          name="repeat"
+          value="${day}"
+          ${isChecked ? `checked` : ``}
+        />
+        <label class="card__repeat-day" for="repeat-${day}-4"
+          >${day}</label
+        >
       `;
     })
     .join(`\n`);
@@ -47,13 +68,14 @@ const createColorsTemplate = (colors, currentColor) => {
 };
 
 export const createTaskEditTemplate = (task) => {
-  const {description, dueDate, tags, color} = task;
+  const {description, dueDate, tags, color, repeatingDays} = task;
 
   const isDateShowing = !!dueDate;
 
   const date = isDateShowing ? `${dueDate.getDate()} ${MonthNames[dueDate.getMonth()]}` : ``;
   const time = isDateShowing ? `${formatTime(dueDate)}` : ``;
 
+  const repeatingDaysMarkup = createRepeatDaysTemplate(Days, repeatingDays);
   const tagsMarkup = createTagsTemplate(Array.from(tags));
   const colorsMarkup = createColorsTemplate(Colors, color);
 
@@ -81,20 +103,22 @@ export const createTaskEditTemplate = (task) => {
             <div class="card__details">
               <div class="card__dates">
                 <button class="card__date-deadline-toggle" type="button">
-                  date: <span class="card__date-status">yes</span>
+                  date: <span class="card__date-status">${isDateShowing ? `yes` : `no`}</span>
                 </button>
 
-                <fieldset class="card__date-deadline">
-                  <label class="card__input-deadline-wrap">
-                    <input
-                      class="card__date"
-                      type="text"
-                      placeholder=""
-                      name="date"
-                      value="${date} ${time}"
-                    />
-                  </label>
-                </fieldset>
+                ${dueDate ? `
+                  <fieldset class="card__date-deadline">
+                    <label class="card__input-deadline-wrap">
+                      <input
+                        class="card__date"
+                        type="text"
+                        placeholder=""
+                        name="date"
+                        value="${date} ${time}"
+                      />
+                    </label>
+                  </fieldset>
+                ` : ``}
 
                 <button class="card__repeat-toggle" type="button">
                   repeat:<span class="card__repeat-status">yes</span>
@@ -102,79 +126,7 @@ export const createTaskEditTemplate = (task) => {
 
                 <fieldset class="card__repeat-days">
                   <div class="card__repeat-days-inner">
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-mo-4"
-                      name="repeat"
-                      value="mo"
-                    />
-                    <label class="card__repeat-day" for="repeat-mo-4"
-                      >mo</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-tu-4"
-                      name="repeat"
-                      value="tu"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-tu-4"
-                      >tu</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-we-4"
-                      name="repeat"
-                      value="we"
-                    />
-                    <label class="card__repeat-day" for="repeat-we-4"
-                      >we</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-th-4"
-                      name="repeat"
-                      value="th"
-                    />
-                    <label class="card__repeat-day" for="repeat-th-4"
-                      >th</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-fr-4"
-                      name="repeat"
-                      value="fr"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-fr-4"
-                      >fr</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      name="repeat"
-                      value="sa"
-                      id="repeat-sa-4"
-                    />
-                    <label class="card__repeat-day" for="repeat-sa-4"
-                      >sa</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-su-4"
-                      name="repeat"
-                      value="su"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-su-4"
-                      >su</label
-                    >
+                    ${repeatingDaysMarkup}
                   </div>
                 </fieldset>
               </div>

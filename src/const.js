@@ -4,6 +4,16 @@ export const DescriptionTasks = [
   `Пройти интенсив на соточку`
 ];
 
+export const Days = [
+  `mo`,
+  `tu`,
+  `we`,
+  `th`,
+  `fr`,
+  `sa`,
+  `su`
+];
+
 export const DefaultRepeatingDays = {
   'mo': false,
   'tu': false,
