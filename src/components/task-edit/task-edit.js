@@ -1,6 +1,64 @@
-export const createTaskEditTemplate = () => {
+import {Colors, MonthNames} from '../../const';
+import {formatTime} from '../../utils.js';
+
+const createTagsTemplate = (tags) => {
+  return tags
+    .map((tag) => {
+      return `
+        <span class="card__hashtag-inner">
+          <input
+            type="hidden"
+            name="hashtag"
+            value="repeat"
+            class="card__hashtag-hidden-input"
+          />
+          <p class="card__hashtag-name">
+            #${tag}
+          </p>
+          <button type="button" class="card__hashtag-delete">
+            delete
+          </button>
+        </span>
+      `;
+    })
+    .join(`\n`);
+};
+
+const createColorsTemplate = (colors, currentColor) => {
+  return colors
+    .map((color) => {
+      return `
+        <input
+          type="radio"
+          id="color-${color}-4"
+          class="card__color-input card__color-input--${color} visually-hidden"
+          name="color"
+          value="${color}"
+          ${color === currentColor ? `checked` : ``}
+        />
+        <label
+          for="color-${color}-4"
+          class="card__color card__color--${color}"
+          >${color}</label
+        >
+      `;
+    })
+    .join(`\n`);
+};
+
+export const createTaskEditTemplate = (task) => {
+  const {description, dueDate, tags, color} = task;
+
+  const isDateShowing = !!dueDate;
+
+  const date = isDateShowing ? `${dueDate.getDate()} ${MonthNames[dueDate.getMonth()]}` : ``;
+  const time = isDateShowing ? `${formatTime(dueDate)}` : ``;
+
+  const tagsMarkup = createTagsTemplate(Array.from(tags));
+  const colorsMarkup = createColorsTemplate(Colors, color);
+
   return `
-    <article class="card card--edit card--yellow card--repeat">
+    <article class="card card--edit card--${color} card--repeat">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__color-bar">
@@ -15,7 +73,7 @@ export const createTaskEditTemplate = () => {
                 class="card__text"
                 placeholder="Start typing your text here..."
                 name="text"
-              >Here is a card with filled data</textarea>
+              >${description}</textarea>
             </label>
           </div>
 
@@ -33,7 +91,7 @@ export const createTaskEditTemplate = () => {
                       type="text"
                       placeholder=""
                       name="date"
-                      value="23 September 11:15 PM"
+                      value="${date} ${time}"
                     />
                   </label>
                 </fieldset>
@@ -123,50 +181,7 @@ export const createTaskEditTemplate = () => {
 
               <div class="card__hashtag">
                 <div class="card__hashtag-list">
-                  <span class="card__hashtag-inner">
-                    <input
-                      type="hidden"
-                      name="hashtag"
-                      value="repeat"
-                      class="card__hashtag-hidden-input"
-                    />
-                    <p class="card__hashtag-name">
-                      #repeat
-                    </p>
-                    <button type="button" class="card__hashtag-delete">
-                      delete
-                    </button>
-                  </span>
-
-                  <span class="card__hashtag-inner">
-                    <input
-                      type="hidden"
-                      name="hashtag"
-                      value="repeat"
-                      class="card__hashtag-hidden-input"
-                    />
-                    <p class="card__hashtag-name">
-                      #cinema
-                    </p>
-                    <button type="button" class="card__hashtag-delete">
-                      delete
-                    </button>
-                  </span>
-
-                  <span class="card__hashtag-inner">
-                    <input
-                      type="hidden"
-                      name="hashtag"
-                      value="repeat"
-                      class="card__hashtag-hidden-input"
-                    />
-                    <p class="card__hashtag-name">
-                      #entertaiment
-                    </p>
-                    <button type="button" class="card__hashtag-delete">
-                      delete
-                    </button>
-                  </span>
+                  ${tagsMarkup}
                 </div>
 
                 <label>
@@ -183,67 +198,7 @@ export const createTaskEditTemplate = () => {
             <div class="card__colors-inner">
               <h3 class="card__colors-title">Color</h3>
               <div class="card__colors-wrap">
-                <input
-                  type="radio"
-                  id="color-black-4"
-                  class="card__color-input card__color-input--black visually-hidden"
-                  name="color"
-                  value="black"
-                />
-                <label
-                  for="color-black-4"
-                  class="card__color card__color--black"
-                  >black</label
-                >
-                <input
-                  type="radio"
-                  id="color-yellow-4"
-                  class="card__color-input card__color-input--yellow visually-hidden"
-                  name="color"
-                  value="yellow"
-                  checked
-                />
-                <label
-                  for="color-yellow-4"
-                  class="card__color card__color--yellow"
-                  >yellow</label
-                >
-                <input
-                  type="radio"
-                  id="color-blue-4"
-                  class="card__color-input card__color-input--blue visually-hidden"
-                  name="color"
-                  value="blue"
-                />
-                <label
-                  for="color-blue-4"
-                  class="card__color card__color--blue"
-                  >blue</label
-                >
-                <input
-                  type="radio"
-                  id="color-green-4"
-                  class="card__color-input card__color-input--green visually-hidden"
-                  name="color"
-                  value="green"
-                />
-                <label
-                  for="color-green-4"
-                  class="card__color card__color--green"
-                  >green</label
-                >
-                <input
-                  type="radio"
-                  id="color-pink-4"
-                  class="card__color-input card__color-input--pink visually-hidden"
-                  name="color"
-                  value="pink"
-                />
-                <label
-                  for="color-pink-4"
-                  class="card__color card__color--pink"
-                  >pink</label
-                >
+                ${colorsMarkup}
               </div>
             </div>
           </div>

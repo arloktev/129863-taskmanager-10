@@ -1,33 +1,7 @@
-const DESCRIPTION_TASKS = [
-  `Изучить теорию`,
-  `Сделать домашку`,
-  `Пройти интенсив на соточку`
-];
+import {DescriptionTasks, DefaultRepeatingDays, Tags, Colors} from '../const';
 
-const COLORS = [
-  `black`,
-  `yellow`,
-  `blue`,
-  `green`,
-  `pink`
-];
-
-const TAGS = [
-  `homework`,
-  `theory`,
-  `practice`,
-  `intensive`,
-  `keks`
-];
-
-const DAYS_REPEATING_DEFAULT = {
-  'mo': false,
-  'tu': false,
-  'we': false,
-  'th': false,
-  'fr': false,
-  'sa': false,
-  'su': false
+const generateRepeatingDays = () => {
+  return Object.assign({}, DefaultRepeatingDays, {'mo': Math.random() > 0.5});
 };
 
 const getRandomInRange = (min, max) => {
@@ -60,11 +34,11 @@ const generateTask = () => {
   const dueDate = Math.random() > 0.5 ? null : getRandomDate();
 
   return {
-    'description': getRandomElementFromArray(DESCRIPTION_TASKS),
+    'description': getRandomElementFromArray(DescriptionTasks),
     dueDate,
-    'repeatingDays': DAYS_REPEATING_DEFAULT,
-    'tags': new Set(generateTags(TAGS)),
-    'color': getRandomElementFromArray(COLORS),
+    'repeatingDays': dueDate ? DefaultRepeatingDays : generateRepeatingDays(),
+    'tags': new Set(generateTags(Tags)),
+    'color': getRandomElementFromArray(Colors),
     'isFavorite': Math.random() > 0.5,
     'isArchive': Math.random() > 0.5,
   };
@@ -75,6 +49,5 @@ const generateTasks = (count) => {
     .fill(``)
     .map(generateTask);
 };
-
 
 export {generateTask, generateTasks};

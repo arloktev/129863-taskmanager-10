@@ -7,10 +7,9 @@ import {createTaskTemplate} from './components/task/task';
 import {createTaskEditTemplate} from './components/task-edit/task-edit';
 import {createLoadMoreButtonTemplate} from './components/load-more-button/load-more-button';
 import {generateTasks} from './mock/task';
-import {filter} from './mock/filter';
 
 const COUNT_TASKS = 20;
-const SHOWING_TASKS_COUNT_ON_START  = 8;
+const SHOWING_TASKS_COUNT_ON_START = 8;
 
 const main = document.querySelector(`.main`);
 const control = main.querySelector(`.main__control`);
@@ -29,8 +28,10 @@ const render = () => {
   renderComponent(board, createTaskListTemplate());
 
   const boardTasks = board.querySelector(`.board__tasks`);
-  renderComponent(boardTasks, createTaskEditTemplate());
-  generateTasks(SHOWING_TASKS_COUNT_ON_START).forEach((task) => renderComponent(boardTasks, createTaskTemplate(task)));
+  const tasks = generateTasks(COUNT_TASKS);
+
+  renderComponent(boardTasks, createTaskEditTemplate(tasks[0]));
+  tasks.slice(1, SHOWING_TASKS_COUNT_ON_START).forEach((task) => renderComponent(boardTasks, createTaskTemplate(task)));
   renderComponent(board, createLoadMoreButtonTemplate());
 };
 
