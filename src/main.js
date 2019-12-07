@@ -12,6 +12,8 @@ import {generateFilters} from './mock/filter';
 const COUNT_TASKS = 20;
 const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
+const tasks = generateTasks(COUNT_TASKS);
+let showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
 
 const main = document.querySelector(`.main`);
 const control = main.querySelector(`.main__control`);
@@ -20,24 +22,48 @@ const renderComponent = (container, template, place = `beforeend`) => {
   return container.insertAdjacentHTML(place, template);
 };
 
+const convertStringToElement = (str) => {
+  const template = document.createElement(`template`);
+  template.innerHTML = str.trim();
+  return template.content.firstChild;
+};
+
+const renderTasks = (startTask) => {
+  const fragment = document.createDocumentFragment();
+
+  tasks.slice(startTask, showingTasksCount).forEach((task) => {
+    fragment.append(convertStringToElement(createTaskTemplate(task)));
+  });
+
+  return fragment;
+};
+
+const createFragments = (...elements) => {
+  const fragment = document.createDocumentFragment();
+
+  elements.forEach((element) => {
+    fragment.append(convertStringToElement(element));
+  });
+
+  return fragment;
+};
+
 const render = () => {
   renderComponent(control, createMenuTemplate());
 
   const filters = generateFilters();
 
-  renderComponent(main, createFilterTemplate(filters));
-  renderComponent(main, createBoardTemplate());
+  main.append(createFragments(createFilterTemplate(filters), createBoardTemplate()));
 
   const board = main.querySelector(`.board`);
-  renderComponent(board, createSortingTemplate());
-  renderComponent(board, createTaskListTemplate());
+  board.append(createFragments(createSortingTemplate(), createTaskListTemplate()));
 
   const boardTasks = board.querySelector(`.board__tasks`);
-  const tasks = generateTasks(COUNT_TASKS);
 
   renderComponent(boardTasks, createTaskEditTemplate(tasks[0]));
-  let showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
-  tasks.slice(1, showingTasksCount).forEach((task) => renderComponent(boardTasks, createTaskTemplate(task)));
+
+  boardTasks.append(renderTasks(1));
+
   renderComponent(board, createLoadMoreButtonTemplate());
 
   const loadMoreButton = board.querySelector(`.load-more`);
@@ -46,8 +72,7 @@ const render = () => {
     const prevTasksCount = showingTasksCount;
     showingTasksCount += SHOWING_TASKS_COUNT_BY_BUTTON;
 
-    tasks.slice(prevTasksCount, showingTasksCount)
-      .forEach((task) => renderComponent(boardTasks, createTaskTemplate(task)));
+    boardTasks.append(renderTasks(prevTasksCount));
 
     if (showingTasksCount >= tasks.length) {
       loadMoreButton.remove();

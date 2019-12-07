@@ -1,24 +1,26 @@
 import {MonthNames} from '../../const';
 import {formatTime} from '../../utils';
 
-const createTagTemplate = (tags) => {
+const createTagTemplate = (tag) => {
+  return `
+    <span class="card__hashtag-inner">
+      <span class="card__hashtag-name">
+        #${tag}
+      </span>
+    </span>
+  `;
+};
+
+const createTagsTemplate = (tags) => {
   return tags
-    .map((tag) => {
-      return `
-        <span class="card__hashtag-inner">
-          <span class="card__hashtag-name">
-            #${tag}
-          </span>
-        </span>
-      `;
-    })
+    .map((tag) => createTagTemplate(tag))
     .join(`\n`);
 };
 
 export const createTaskTemplate = (task) => {
   const {description, dueDate, tags, color} = task;
 
-  const hashtags = createTagTemplate(Array.from(tags));
+  const hashtags = createTagsTemplate(Array.from(tags));
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;

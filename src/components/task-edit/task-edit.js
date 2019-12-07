@@ -1,69 +1,74 @@
 import {Colors, MonthNames, Days} from '../../const';
 import {formatTime} from '../../utils.js';
 
+const createTagTemplate = (tag) => {
+  return `
+    <span class="card__hashtag-inner">
+      <input
+        type="hidden"
+        name="hashtag"
+        value="repeat"
+        class="card__hashtag-hidden-input"
+      />
+      <p class="card__hashtag-name">
+        #${tag}
+      </p>
+      <button type="button" class="card__hashtag-delete">
+        delete
+      </button>
+    </span>
+  `;
+};
+
+const createDayTemplate = (day, isChecked) => {
+  return `
+  <input
+      class="visually-hidden card__repeat-day-input"
+      type="checkbox"
+      id="repeat-${day}-4"
+      name="repeat"
+      value="${day}"
+      ${isChecked ? `checked` : ``}
+    />
+    <label class="card__repeat-day" for="repeat-${day}-4"
+      >${day}</label
+    >
+  `;
+};
+
+const createColorTemplate = (color, currentColor) => {
+  return `
+    <input
+      type="radio"
+      id="color-${color}-4"
+      class="card__color-input card__color-input--${color} visually-hidden"
+      name="color"
+      value="${color}"
+      ${color === currentColor ? `checked` : ``}
+    />
+    <label
+      for="color-${color}-4"
+      class="card__color card__color--${color}"
+      >${color}</label
+    >
+  `;
+};
+
 const createTagsTemplate = (tags) => {
   return tags
-    .map((tag) => {
-      return `
-        <span class="card__hashtag-inner">
-          <input
-            type="hidden"
-            name="hashtag"
-            value="repeat"
-            class="card__hashtag-hidden-input"
-          />
-          <p class="card__hashtag-name">
-            #${tag}
-          </p>
-          <button type="button" class="card__hashtag-delete">
-            delete
-          </button>
-        </span>
-      `;
-    })
+    .map((tag) => createTagTemplate(tag))
     .join(`\n`);
 };
 
 const createRepeatDaysTemplate = (days, repeatingDays) => {
   return days
-    .map((day) => {
-      const isChecked = repeatingDays[day];
-      return `
-        <input
-          class="visually-hidden card__repeat-day-input"
-          type="checkbox"
-          id="repeat-${day}-4"
-          name="repeat"
-          value="${day}"
-          ${isChecked ? `checked` : ``}
-        />
-        <label class="card__repeat-day" for="repeat-${day}-4"
-          >${day}</label
-        >
-      `;
-    })
+    .map((day) => createDayTemplate(day, repeatingDays[day]))
     .join(`\n`);
 };
 
 const createColorsTemplate = (colors, currentColor) => {
   return colors
-    .map((color) => {
-      return `
-        <input
-          type="radio"
-          id="color-${color}-4"
-          class="card__color-input card__color-input--${color} visually-hidden"
-          name="color"
-          value="${color}"
-          ${color === currentColor ? `checked` : ``}
-        />
-        <label
-          for="color-${color}-4"
-          class="card__color card__color--${color}"
-          >${color}</label
-        >
-      `;
-    })
+    .map((color) => createColorTemplate(color, currentColor))
     .join(`\n`);
 };
 
@@ -85,7 +90,7 @@ export const createTaskEditTemplate = (task) => {
   const colorsMarkup = createColorsTemplate(Colors, color);
 
   return `
-    <article class="card card--edit card--${color} card--${repeatClass} card--${deadlineClass}">
+    <article class="card card--edit card--${color} ${repeatClass} ${deadlineClass}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__color-bar">
