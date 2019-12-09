@@ -54,6 +54,22 @@ const createColorTemplate = (color, currentColor) => {
   `;
 };
 
+const createDeadlineTemplate = (date, time) => {
+  return `
+    <fieldset class="card__date-deadline">
+      <label class="card__input-deadline-wrap">
+        <input
+          class="card__date"
+          type="text"
+          placeholder=""
+          name="date"
+          value="${date} ${time}"
+        />
+      </label>
+    </fieldset>
+  `;
+};
+
 const createTagsTemplate = (tags) => {
   return tags
     .map((tag) => createTagTemplate(tag))
@@ -61,9 +77,13 @@ const createTagsTemplate = (tags) => {
 };
 
 const createRepeatDaysTemplate = (days, repeatingDays) => {
-  return days
-    .map((day) => createDayTemplate(day, repeatingDays[day]))
-    .join(`\n`);
+  return `
+    <fieldset class="card__repeat-days">
+      <div class="card__repeat-days-inner">
+        ${days.map((day) => createDayTemplate(day, repeatingDays[day])).join(`\n`)}
+      </div>
+    </fieldset>
+  `;
 };
 
 const createColorsTemplate = (colors, currentColor) => {
@@ -85,9 +105,10 @@ export const createTaskEditTemplate = (task) => {
   const repeatClass = isRepeatingTask ? `card--repeat` : ``;
   const deadlineClass = isExpired ? `card--deadline` : ``;
 
-  const repeatingDaysMarkup = createRepeatDaysTemplate(Days, repeatingDays);
+  const repeatingDaysMarkup = isRepeatingTask ? createRepeatDaysTemplate(Days, repeatingDays) : ``;
   const tagsMarkup = createTagsTemplate(Array.from(tags));
   const colorsMarkup = createColorsTemplate(Colors, color);
+  const deadlineMarkup = isDateShowing ? createDeadlineTemplate(date, time) : ``;
 
   return `
     <article class="card card--edit card--${color} ${repeatClass} ${deadlineClass}">
@@ -116,31 +137,13 @@ export const createTaskEditTemplate = (task) => {
                   date: <span class="card__date-status">${isDateShowing ? `yes` : `no`}</span>
                 </button>
 
-                ${isDateShowing ? `
-                  <fieldset class="card__date-deadline">
-                    <label class="card__input-deadline-wrap">
-                      <input
-                        class="card__date"
-                        type="text"
-                        placeholder=""
-                        name="date"
-                        value="${date} ${time}"
-                      />
-                    </label>
-                  </fieldset>
-                ` : ``}
+                ${deadlineMarkup}
 
                 <button class="card__repeat-toggle" type="button">
                   repeat:<span class="card__repeat-status">${isRepeatingTask ? `yes` : `no`}</span>
                 </button>
 
-                ${isRepeatingTask ? `
-                  <fieldset class="card__repeat-days">
-                    <div class="card__repeat-days-inner">
-                      ${repeatingDaysMarkup}
-                    </div>
-                  </fieldset>
-                ` : ``}
+                ${repeatingDaysMarkup}
               </div>
 
               <div class="card__hashtag">
