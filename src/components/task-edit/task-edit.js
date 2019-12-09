@@ -22,7 +22,7 @@ const createTagTemplate = (tag) => {
 
 const createDayTemplate = (day, isChecked) => {
   return `
-  <input
+    <input
       class="visually-hidden card__repeat-day-input"
       type="checkbox"
       id="repeat-${day}-4"

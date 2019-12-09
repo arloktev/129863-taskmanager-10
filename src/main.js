@@ -12,6 +12,7 @@ import {generateFilters} from './mock/filter';
 const COUNT_TASKS = 20;
 const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
+const START_TASK = 1;
 const tasks = generateTasks(COUNT_TASKS);
 let showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
 
@@ -28,7 +29,7 @@ const convertStringToElement = (str) => {
   return template.content.firstChild;
 };
 
-const renderTasks = (startTask) => {
+const createTasksFragment = (startTask) => {
   const fragment = document.createDocumentFragment();
 
   tasks.slice(startTask, showingTasksCount).forEach((task) => {
@@ -38,7 +39,7 @@ const renderTasks = (startTask) => {
   return fragment;
 };
 
-const createFragments = (...elements) => {
+const createElementsFragment = (...elements) => {
   const fragment = document.createDocumentFragment();
 
   elements.forEach((element) => {
@@ -53,31 +54,33 @@ const render = () => {
 
   const filters = generateFilters();
 
-  main.append(createFragments(createFilterTemplate(filters), createBoardTemplate()));
+  main.append(createElementsFragment(createFilterTemplate(filters), createBoardTemplate()));
 
   const board = main.querySelector(`.board`);
-  board.append(createFragments(createSortingTemplate(), createTaskListTemplate()));
+  board.append(createElementsFragment(createSortingTemplate(), createTaskListTemplate()));
 
   const boardTasks = board.querySelector(`.board__tasks`);
 
   renderComponent(boardTasks, createTaskEditTemplate(tasks[0]));
 
-  boardTasks.append(renderTasks(1));
+  boardTasks.append(createTasksFragment(START_TASK));
 
   renderComponent(board, createLoadMoreButtonTemplate());
 
   const loadMoreButton = board.querySelector(`.load-more`);
 
-  loadMoreButton.addEventListener(`click`, () => {
+  const loadMoreHandler = () => {
     const prevTasksCount = showingTasksCount;
     showingTasksCount += SHOWING_TASKS_COUNT_BY_BUTTON;
 
-    boardTasks.append(renderTasks(prevTasksCount));
+    boardTasks.append(createTasksFragment(prevTasksCount));
 
     if (showingTasksCount >= tasks.length) {
       loadMoreButton.remove();
     }
-  });
+  };
+
+  loadMoreButton.addEventListener(`click`, loadMoreHandler);
 };
 
 render();
