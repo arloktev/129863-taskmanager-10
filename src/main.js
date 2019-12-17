@@ -20,27 +20,21 @@ let showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
 const main = document.querySelector(`.main`);
 const control = main.querySelector(`.main__control`);
 
-const createTasksFragment = (startTask) => {
-  const fragment = document.createDocumentFragment();
-
-  tasks.slice(startTask, showingTasksCount).forEach((task) => {
-    renderElement(fragment, new TaskComponent(task).getElement(), RenderPosition.BEFOREEND);
-  });
-
-  return fragment;
-};
-
-const renderTasks = (task) => {
+const renderTasks = (task, place) => {
   const taskComponent = new TaskComponent(task);
   const taskEditComponent = new TaskEditComponent(task);
 
-  const editButton = task.getElement().querySelector(`.card__btn--edit`);
-
+  const editButton = taskComponent.getElement().querySelector(`.card__btn--edit`);
   editButton.addEventListener(`click`, () => {
-    boardTasks.replaceChild(taskComponent, taskEditComponent);
+    place.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
   });
 
+  const editForm = taskEditComponent.getElement().querySelector(`form`);
+  editForm.addEventListener(`submit`, () => {
+    place.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+  });
 
+  renderElement(place, taskComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
 const render = () => {
@@ -55,7 +49,9 @@ const render = () => {
   renderElement(board, new TaskListComponent().getElement(), RenderPosition.BEFOREEND);
 
   const boardTasks = board.querySelector(`.board__tasks`);
-  renderElement(boardTasks, createTasksFragment(START_TASK), RenderPosition.BEFOREEND);
+  tasks.slice(START_TASK, showingTasksCount).forEach((task) => {
+    renderTasks(task, boardTasks);
+  });
 
   const loadMoreButton = new LoadMoreButtonComponent();
   renderElement(board, loadMoreButton.getElement(), RenderPosition.BEFOREEND);
@@ -64,7 +60,9 @@ const render = () => {
     const prevTasksCount = showingTasksCount;
     showingTasksCount += SHOWING_TASKS_COUNT_BY_BUTTON;
 
-    boardTasks.append(createTasksFragment(prevTasksCount));
+    tasks.slice(prevTasksCount, showingTasksCount).forEach((task) => {
+      renderTasks(task, boardTasks);
+    });
 
     if (showingTasksCount >= tasks.length) {
       loadMoreButton.getElement().remove();
