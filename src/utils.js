@@ -26,3 +26,26 @@ export const formatTime = (date) => {
 
   return `${hours}:${minutes} ${interval}`;
 };
+
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+export const renderElement = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+export const createElement = (str) => {
+  const template = document.createElement(`template`);
+  template.innerHTML = str.trim();
+
+  return template.content.firstChild;
+};
