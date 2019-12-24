@@ -1,5 +1,6 @@
 import {MonthNames} from '../../const';
-import {formatTime, createElement} from '../../utils';
+import {formatTime} from '../../utils';
+import AbstractComponent from '../abstract-component/abstract-component';
 
 const createTagTemplate = (tag) => {
   return `
@@ -83,25 +84,13 @@ export const createTaskTemplate = (task) => {
   `;
 };
 
-export default class Task {
+export default class Task extends AbstractComponent {
   constructor(task) {
-    this._element = null;
+    super();
     this._task = task;
   }
 
   getTemplate() {
     return createTaskTemplate(this._task);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
