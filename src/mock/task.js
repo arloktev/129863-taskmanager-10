@@ -1,5 +1,5 @@
 import {DescriptionTasks, DefaultRepeatingDays, Tags, Colors} from '../const';
-import {getRandomDate, getRandomElement, getRandomBoolean} from '../utils';
+import {getRandomDate, getRandomElement, getRandomBoolean} from '../utils/common';
 
 const generateRepeatingDays = () => {
   return Object.assign({}, DefaultRepeatingDays, {'mo': getRandomBoolean()}, {'we': getRandomBoolean()}, {'fr': getRandomBoolean()});

@@ -7,7 +7,7 @@ import TaskComponent from './components/task/task';
 import TaskEditComponent from './components/task-edit/task-edit';
 import NoTasksComponent from './components/no-tasks/no-tasks';
 import LoadMoreButtonComponent from './components/load-more-button/load-more-button';
-import {renderElement, RenderPosition} from './utils';
+import {renderElement, replaceElement, RenderPosition, removeElement} from './utils/render';
 import {generateTasks} from './mock/task';
 import {generateFilters} from './mock/filter';
 
@@ -27,11 +27,11 @@ const renderTasks = (task, place) => {
   const editButton = taskComponent.getElement().querySelector(`.card__btn--edit`);
 
   const replaceTaskToEdit = () => {
-    place.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+    replaceElement(taskEditComponent, taskComponent);
   };
 
   const replaceEditToTask = () => {
-    place.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+    replaceElement(taskComponent, taskEditComponent);
   };
 
   const onEscDown = (evt) => {
@@ -39,6 +39,7 @@ const renderTasks = (task, place) => {
 
     if (isEscKey) {
       replaceEditToTask();
+
       document.removeEventListener(`keydown`, onEscDown);
     }
   };
@@ -89,8 +90,7 @@ const render = () => {
       });
 
       if (showingTasksCount >= tasks.length) {
-        loadMoreButton.getElement().remove();
-        loadMoreButton.removeElement();
+        removeElement(loadMoreButton);
       }
     };
 

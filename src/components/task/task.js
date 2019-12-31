@@ -1,5 +1,5 @@
 import {MonthNames} from '../../const';
-import {formatTime} from '../../utils';
+import {formatTime} from '../../utils/common';
 import AbstractComponent from '../abstract-component/abstract-component';
 
 const createTagTemplate = (tag) => {
