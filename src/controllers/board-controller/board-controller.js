@@ -1,5 +1,5 @@
 import {renderElement, replaceElement, removeElement, RenderPosition} from '../../utils/render';
-import SortingComponent from '../../components/sorting/sorting';
+import SortingComponent, {SortType} from '../../components/sorting/sorting';
 import TaskListComponent from '../../components/task-list/task-list';
 import NoTasksComponent from '../../components/no-tasks/no-tasks';
 import LoadMoreButtonComponent from '../../components/load-more-button/load-more-button';
@@ -11,7 +11,7 @@ const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
 const START_TASK = 0;
 let showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
 
-const renderTasks = (task, place) => {
+const renderTask = (task, place) => {
   const taskComponent = new TaskComponent(task);
   const taskEditComponent = new TaskEditComponent(task);
 
@@ -43,6 +43,12 @@ const renderTasks = (task, place) => {
   renderElement(place, taskComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
+const renderTasks = (tasks, place) => {
+  tasks.forEach((task) => {
+    renderTask(task, place);
+  });
+};
+
 export default class BoardController {
   constructor(container) {
     this._container = container;
@@ -66,25 +72,54 @@ export default class BoardController {
     renderElement(container, this._taskListComponent.getElement(), RenderPosition.BEFOREEND);
 
     const boardTasks = this._taskListComponent.getElement();
-    tasks.slice(START_TASK, showingTasksCount).forEach((task) => {
-      renderTasks(task, boardTasks);
-    });
+    renderTasks(tasks.slice(START_TASK, showingTasksCount), boardTasks);
 
-    renderElement(container, this._loadMoreButtonComponent.getElement(), RenderPosition.BEFOREEND);
-
-    const loadMoreHandler = () => {
-      const prevTasksCount = showingTasksCount;
-      showingTasksCount += SHOWING_TASKS_COUNT_BY_BUTTON;
-
-      tasks.slice(prevTasksCount, showingTasksCount).forEach((task) => {
-        renderTasks(task, boardTasks);
-      });
-
+    const renderLoadMoreButton = () => {
       if (showingTasksCount >= tasks.length) {
-        removeElement(this._loadMoreButtonComponent);
+        return;
       }
+
+      renderElement(container, this._loadMoreButtonComponent.getElement(), RenderPosition.BEFOREEND);
+
+      this._loadMoreButtonComponent.setClickHandler(() => {
+
+        const prevTasksCount = showingTasksCount;
+        showingTasksCount += SHOWING_TASKS_COUNT_BY_BUTTON;
+
+        renderTasks(tasks.slice(prevTasksCount, showingTasksCount), boardTasks);
+
+        if (showingTasksCount >= tasks.length) {
+          removeElement(this._loadMoreButtonComponent);
+        }
+      });
     };
 
-    this._loadMoreButtonComponent.setClickHandler(loadMoreHandler);
+    renderLoadMoreButton();
+
+    this._sortingComponent.setClickHandler((sortType) => {
+      let sortedTasks = [];
+
+      switch (sortType) {
+        case SortType.DATE_UP:
+          sortedTasks = tasks.slice().sort((prev, next) => prev.dueDate - next.dueDate);
+          break;
+        case SortType.DATE_DOWN:
+          sortedTasks = tasks.slice().sort((prev, next) => next.dueDate - prev.dueDate);
+          break;
+        case SortType.DEFAULT:
+          sortedTasks = tasks.slice(START_TASK, showingTasksCount);
+          break;
+      }
+
+      boardTasks.innerHTML = ``;
+
+      renderTasks(sortedTasks, boardTasks);
+
+      if (sortType === SortType.DEFAULT) {
+        renderLoadMoreButton();
+      } else {
+        removeElement(this._loadMoreButtonComponent);
+      }
+    });
   }
 }
