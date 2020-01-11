@@ -1,5 +1,4 @@
-import {MonthNames} from '../../const';
-import {formatTime} from '../../utils/common';
+import {formatTime, formatDate} from '../../utils/common';
 import AbstractComponent from '../abstract-component/abstract-component';
 
 const createTagTemplate = (tag) => {
@@ -26,7 +25,7 @@ export const createTaskTemplate = (task) => {
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${MonthNames[dueDate.getMonth()]}` : ``;
+  const date = isDateShowing ? `${formatDate(dueDate)}` : ``;
   const time = isDateShowing ? `${formatTime(dueDate)}` : ``;
 
   const deadlineClass = isExpired ? `card--deadline` : ``;
@@ -87,6 +86,7 @@ export const createTaskTemplate = (task) => {
 export default class Task extends AbstractComponent {
   constructor(task) {
     super();
+
     this._task = task;
   }
 
@@ -96,6 +96,16 @@ export default class Task extends AbstractComponent {
 
   setEditButtonClickHandler(handler) {
     this.getElement().querySelector(`.card__btn--edit`)
+      .addEventListener(`click`, handler);
+  }
+
+  setArchiveButtonClickHandler(handler) {
+    this.getElement().querySelector(`.card__btn--archive`)
+      .addEventListener(`click`, handler);
+  }
+
+  setFavoritesButtonClickHandler(handler) {
+    this.getElement().querySelector(`.card__btn--favorites`)
       .addEventListener(`click`, handler);
   }
 }
