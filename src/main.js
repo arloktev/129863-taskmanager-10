@@ -1,7 +1,7 @@
 import MenuComponent from './components/menu/menu';
 import FilterComponent from './components/filter/filter';
 import BoardComponent from './components/board/board';
-import BoardController from './controllers/board-controller/board-controller';
+import BoardController from './controllers/board';
 import {renderElement, RenderPosition} from './utils/render';
 import {generateTasks} from './mock/task';
 import {generateFilters} from './mock/filter';
