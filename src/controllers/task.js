@@ -7,7 +7,7 @@ const Mode = {
   EDIT: `edit`,
 };
 
-export default class BoardController {
+export default class TaskController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;

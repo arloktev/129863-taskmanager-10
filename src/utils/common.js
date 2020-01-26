@@ -23,4 +23,4 @@ export const formatTime = (date) => {
 
 export const formatDate = (date) => {
   return moment(date).format(`DD MMMM`);
-}
+};
